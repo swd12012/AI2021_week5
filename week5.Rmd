@@ -1,0 +1,104 @@
+---
+title: "week5lab.rmd"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+use_python('/Users/Sam/miniconda3/bin/python', required=TRUE)
+```
+
+## Base R
+
+### Labeling Axes
+
+```{r}
+plot(sin, xlab=expression(sigma), ylab=expression(tau))
+```
+
+```{r}
+plot(sin, xlab=expression(italic(sigma[s]^2)), ylab=expression(tau))
+```
+
+### Color and Line Style
+
+```{r}
+plot(sin, col='red', lwd=3, lty=4, xlab=expression(italic(sigma[s]^2)), ylab=expression(tau))
+```
+
+### Annotations from Data
+
+```{r}
+y <- 7
+plot(sin, main=(bquote(Gamma==.(y))))
+
+plot(sin)
+text(x=0.1,y=0.4,bquote(Gamma==.(y)))
+```
+
+### Saving Files
+
+```{r}
+pdf('week5.pdf', width=10, height=10, pointsize=18)
+y <- 7
+plot(sin, main=(bquote(Gamma==.(y))))
+dev.off()
+
+tiff('week5.tif', width =10, height=10, units='in', pointsize=18, res=72)
+y <- 7
+plot(sin, main=(bquote(Gamma==.(y))), cex.axis=0.5)
+dev.off()
+
+png('week5_72dpi.png', width=10, height=10, units='in', pointsize=18, res=72)
+y <- 7
+plot(sin, main=(bquote(Gamma==.(y))))
+dev.off()
+
+png('week5_300dpi.png', width=10, height=10, units='in', pointsize=18, res=300)
+y <- 7
+plot(sin, main=(bquote(Gamma==.(y))))
+dev.off()
+```
+
+## ggplot
+
+```{r}
+library(ggplot2)
+
+data(mtcars)
+p = ggplot(mtcars, aes(x=cyl, y = mpg)) + geom_point()
+p
+
+#Adding axis labels
+p=ggplot(mtcars, aes(x=cyl, y = mpg)) + geom_point() + labs(x='Cylinders', y='Average mpg')
+p
+
+#Changing point style
+p=ggplot(mtcars, aes(x=cyl, y = mpg)) + geom_point(shape=9,color='red',size=3) + labs(x='Cylinders', y='Average mpg')
+p
+
+#Labels from data
+year <- '1984'
+custom_title <- paste(year, 'cars by cylinder and mpg')
+p=ggplot(mtcars, aes(x=cyl, y = mpg)) + geom_point() + labs(x='Cylinders', y='Average mpg', title=custom_title) +
+  theme(plot.title = element_text(hjust = 0.5))
+p
+
+#Annotations
+year <- '1984'
+custom_title <- paste(year, 'cars by cylinder and mpg')
+p=ggplot(mtcars, aes(x=cyl, y = mpg)) + geom_point() + labs(x='Cylinders', y='Average mpg', title=custom_title) +
+  theme(plot.title = element_text(hjust = 0.5))
+p+annotate("text", x=6, y=21, label='Mazda RX4')
+
+#ggplot layouts
+library(ggpubr)
+
+#Two plots side by side
+ggarrange(p, p, labels=c('A','B'))
+
+#Four plots
+ggarrange(p, p, p, p, labels=c('A','B','C', 'D'), ncol=2, nrow=2)
+
+```
